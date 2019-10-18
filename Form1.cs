@@ -19,6 +19,8 @@ namespace FormTTP
         public Form1()
         {
             InitializeComponent();
+            textBox1.KeyPress += KeyPress_OnlyNumber;
+            textBox3.KeyPress += KeyPress_OnlyNumber;
         }
         int width = Convert.ToInt32(ConfigurationManager.AppSettings["width"]);
         int height = Convert.ToInt32(ConfigurationManager.AppSettings["height"]);
@@ -272,6 +274,22 @@ namespace FormTTP
                 label4.Text = "图像配置已更改失败";
                 label4.ForeColor = Color.Red;
             }
+        }
+
+        /// <summary>
+        /// 只允许输入数字
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void KeyPress_OnlyNumber(object sender, KeyPressEventArgs e)
+        {
+            //全角占一个汉字,半角点半个汉字,所以在字节上是不同的
+            //全角数字"KeyChar"=2,半角数字"KeyChar"=1
+            byte[] array = System.Text.Encoding.Default.GetBytes(e.KeyChar.ToString());
+            if (!(char.IsDigit(e.KeyChar) || array.Length == 2))
+                e.Handled = true;
+            if (e.KeyChar == '\b' || e.KeyChar == '.')
+                e.Handled = false;
         }
     }
 }
